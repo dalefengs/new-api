@@ -2,13 +2,8 @@ name: Publish Docker image (amd64)
 
 on:
   push:
-    tags:
-      - '*'
-  workflow_dispatch:
-    inputs:
-      name:
-        description: 'reason'
-        required: false
+    branches: [dev]
+
 jobs:
   push_to_registries:
     name: Push Docker image to multiple registries
@@ -30,10 +25,16 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            dalefengs/new-api
+
       - name: Build and push Docker images
         uses: docker/build-push-action@v3
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
