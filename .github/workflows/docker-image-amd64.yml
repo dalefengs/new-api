@@ -7,6 +7,7 @@ on:
 jobs:
   push_to_registries:
     name: Push Docker image to multiple registries
+    if: "contains(github.event.head_commit.message, 'build:')" # 当提交信息包含 Publish 时执行
     runs-on: ubuntu-latest
     permissions:
       packages: write
