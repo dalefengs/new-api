@@ -113,7 +113,7 @@ func SearchChannels(keyword string, group string, model string) ([]*Channel, err
 	}
 	order := "priority desc"
 	// 执行查询
-	err := baseQuery.Where(whereClause, args...).Or(order).Find(&channels).Error
+	err := baseQuery.Where(whereClause, args...).Order(order).Find(&channels).Error
 	if err != nil {
 		return nil, err
 	}
