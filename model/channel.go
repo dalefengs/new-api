@@ -108,10 +108,11 @@ func SearchChannels(keyword string, group string, model string) ([]*Channel, err
 	var args []interface{}
 	if group != "" && group != "null" {
 		var groupCondition string
-		if common.UsingPostgreSQL {
-			groupCondition = `(',' || ` + groupCol + ` || ',') LIKE ?`
-		} else {
+		if common.UsingMySQL {
 			groupCondition = `CONCAT(',', ` + groupCol + `, ',') LIKE ?`
+		} else {
+			// sqlite, PostgreSQL
+			groupCondition = `(',' || ` + groupCol + ` || ',') LIKE ?`
 		}
 		whereClause = "(id = ? OR name LIKE ? OR " + keyCol + " = ?) AND " + modelsCol + ` LIKE ? AND ` + groupCondition
 		args = append(args, common.String2Int(keyword), "%"+keyword+"%", keyword, "%"+model+"%", "%,"+group+",%")
@@ -119,9 +120,9 @@ func SearchChannels(keyword string, group string, model string) ([]*Channel, err
 		whereClause = "(id = ? OR name LIKE ? OR " + keyCol + " = ?) AND " + modelsCol + " LIKE ?"
 		args = append(args, common.String2Int(keyword), "%"+keyword+"%", keyword, "%"+model+"%")
 	}
-	order := "priority desc"
+
 	// 执行查询
-	err := baseQuery.Where(whereClause, args...).Order(order).Find(&channels).Error
+	err := baseQuery.Where(whereClause, args...).Order("priority desc").Find(&channels).Error
 	if err != nil {
 		return nil, err
 	}
