@@ -75,7 +75,7 @@ func (channel *Channel) Save() error {
 func GetAllChannels(startIdx int, num int, selectAll bool, idSort bool) ([]*Channel, error) {
 	var channels []*Channel
 	var err error
-	order := "priority desc"
+	order := "priority desc, weight desc, id desc"
 	if idSort {
 		order = "id desc"
 	}
