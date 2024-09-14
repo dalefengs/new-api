@@ -107,6 +107,14 @@ func TextHelper(c *gin.Context) *dto.OpenAIErrorWithStatusCode {
 	}
 
 	promptTokens, err := getPromptTokens(textRequest, relayInfo)
+
+	// github model 最大长度限制
+	if strings.Contains(relayInfo.BaseUrl, "https://bwg.kl.do/ghmodels") {
+		if promptTokens > 7500 {
+			return service.OpenAIErrorWrapper(err, "maximum_token_is_greater_than_8k", http.StatusInternalServerError)
+		}
+	}
+
 	// count messages token error 计算promptTokens错误
 	if err != nil {
 		return service.OpenAIErrorWrapper(err, "count_token_messages_failed", http.StatusInternalServerError)
