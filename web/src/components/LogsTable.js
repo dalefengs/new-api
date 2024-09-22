@@ -207,6 +207,7 @@ const LogsTable = () => {
     },
     {
       title: '渠道名称',
+      className: isAdmin() ? 'tableShow' : 'tableHiddle',
       dataIndex: 'channel_name',
       render: (text, record, index) => {
         return isAdminUser ? (
